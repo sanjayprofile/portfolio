@@ -55,15 +55,20 @@ const currentPath = Astro.url.pathname;
         </svg>
       </button>
 
-      <button class="nav-mobile-toggle" id="nav-mobile-toggle" aria-label="Toggle menu" aria-expanded="false">
-        <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6"/>
-          <line x1="3" y1="12" x2="21" y2="12"/>
-          <line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
     </div>
   </div>
+
+  <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+    {navLinks.map(({ href, label }) => (
+      <a
+        href={href}
+        class={`mobile-bottom-link ${currentPath === href || (href !== '/' && currentPath.startsWith(href)) ? 'active' : ''}`}
+        aria-current={currentPath === href ? 'page' : undefined}
+      >
+        {label}
+      </a>
+    ))}
+  </nav>
 </nav>
 
 <style>
@@ -90,12 +95,4 @@ const currentPath = Astro.url.pathname;
     );
   });
 
-  // Mobile menu
-  const mobileToggle = document.getElementById('nav-mobile-toggle');
-  const navLinks = document.getElementById('nav-links');
-  mobileToggle?.addEventListener('click', () => {
-    const isOpen = navLinks?.classList.contains('open');
-    navLinks?.classList.toggle('open');
-    mobileToggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
-  });
 </script>
