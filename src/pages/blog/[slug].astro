@@ -185,9 +185,10 @@ const postId = post.id;
   updateProgress();
 
   // Keep the embedded discussion theme in sync with the site theme.
-  const giscusTheme = document.documentElement.getAttribute('data-theme') ?? 'light';
-  const giscus = document.querySelector<HTMLScriptElement>('#giscus-container script');
-  giscus?.setAttribute('data-theme', giscusTheme);
+  const giscusScript = document.querySelector('#giscus-container script');
+  if (giscusScript instanceof HTMLScriptElement) {
+    giscusScript.setAttribute('data-theme', document.documentElement.getAttribute('data-theme') ?? 'light');
+  }
   const themeObserver = new MutationObserver(() => {
     const theme = document.documentElement.getAttribute('data-theme') ?? 'light';
     document.querySelector<HTMLIFrameElement>('.giscus-frame')?.contentWindow?.postMessage(
