@@ -135,7 +135,7 @@ const postId = post.id;
             data-reactions-enabled="1"
             data-emit-metadata="0"
             data-input-position="bottom"
-            data-theme="preferred_color_scheme"
+            data-theme="light"
             data-lang="en"
             data-loading="lazy"
             crossorigin="anonymous"
@@ -183,6 +183,27 @@ const postId = post.id;
 
   window.addEventListener('scroll', updateProgress, { passive: true });
   updateProgress();
+
+  // Keep the embedded discussion theme in sync with the site theme.
+  const giscusTheme = document.documentElement.getAttribute('data-theme') ?? 'light';
+  const giscus = document.querySelector<HTMLScriptElement>('#giscus-container script');
+  giscus?.setAttribute('data-theme', giscusTheme);
+  const themeObserver = new MutationObserver(() => {
+    const theme = document.documentElement.getAttribute('data-theme') ?? 'light';
+    document.querySelector<HTMLIFrameElement>('.giscus-frame')?.contentWindow?.postMessage(
+      { giscus: { setConfig: { theme } } },
+      'https://giscus.app'
+    );
+  });
+  window.addEventListener('message', (event) => {
+    if (event.origin !== 'https://giscus.app' || event.data?.giscus?.discussion === undefined) return;
+    const theme = document.documentElement.getAttribute('data-theme') ?? 'light';
+    document.querySelector<HTMLIFrameElement>('.giscus-frame')?.contentWindow?.postMessage(
+      { giscus: { setConfig: { theme } } },
+      'https://giscus.app'
+    );
+  });
+  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
   // ── Listen to Article (Web Speech API) ───────────
   const listenBtn = document.getElementById(`listen-btn-${postId}`);
