@@ -2,69 +2,43 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Sign in" description="Sign in to Ratna Sanjay's portfolio with Telegram.">
+<Layout title="Sign in" description="Sign in to Ratna Sanjay's portfolio with GitHub.">
   <div class="auth-page container-prose">
     <section class="auth-card">
-      <div class="auth-heading">
-        <div class="telegram-mark" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21.5 3.5 18.2 20c-.25 1.2-.9 1.5-1.8.95l-5-3.7-2.4 2.3c-.27.27-.5.5-1.03.5l.36-5.1 9.3-8.4c.4-.36-.08-.56-.62-.2L5.5 13.55.6 12.02c-1.07-.34-1.09-1.08.22-1.6L20 3.05c.9-.33 1.68.2 1.5.45Z" fill="currentColor"/>
-          </svg>
-        </div>
-        <p class="section-label">Account access</p>
-        <h1 class="section-title">Continue with Telegram</h1>
-        <p class="section-description">
-          Sign in or create your account using Telegram. No password required.
-        </p>
+      <div class="github-auth-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.74.08-.74 1.2.08 1.84 1.23 1.84 1.23 1.07 1.83 2.8 1.3 3.48.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.46 11.46 0 0 1 6 0c2.3-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .5Z"/></svg>
       </div>
-
-      <div class="telegram-login" id="telegram-login">
-        <div class="telegram-login-inner">
-          <span class="auth-status" id="auth-status">Loading Telegram sign in...</span>
-        </div>
-      </div>
-
-      <div class="auth-note">
-        <span class="auth-note-dot"></span>
-        <span>No message from the bot is required</span>
-      </div>
+      <p class="section-label">Account access</p>
+      <h1 class="section-title">Continue with GitHub</h1>
+      <p class="section-description">Sign in or create your account using GitHub. No password is required.</p>
+      <a class="btn btn-primary github-login-button" id="github-login" href="/api/auth/github/login">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 .5a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.74.08-.74 1.2.08 1.84 1.23 1.84 1.23 1.07 1.83 2.8 1.3 3.48.99.11-.77.42-1.3.76-1.6-2.67-.3-5.47-1.34-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.46 11.46 0 0 1 6 0c2.3-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.6-2.8 5.62-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.69.83.57A12 12 0 0 0 12 .5Z"/></svg>
+        Continue with GitHub
+      </a>
+      <p class="auth-status" id="auth-status" hidden></p>
       <button class="btn btn-secondary auth-sign-out" id="sign-out" type="button" hidden>Sign out</button>
+      <p class="auth-note"><span class="auth-note-dot"></span>Secure OAuth authentication</p>
     </section>
   </div>
 </Layout>
 
 <script>
-  const loginContainer = document.getElementById('telegram-login');
+  const loginButton = document.getElementById('github-login');
   const status = document.getElementById('auth-status');
   const signOut = document.getElementById('sign-out');
-
-  function renderTelegramLogin() {
-    const botUsername = import.meta.env.PUBLIC_TELEGRAM_BOT_USERNAME ?? 'sanjayclubbot';
-    if (!botUsername || !loginContainer) {
-      if (status) status.textContent = 'Telegram sign in is not configured yet.';
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://telegram.org/js/telegram-widget.js?22';
-    script.async = true;
-    script.dataset.telegramLogin = botUsername;
-    script.dataset.size = 'large';
-    script.dataset.authUrl = `${window.location.origin}/api/auth/telegram`;
-    loginContainer.appendChild(script);
-  }
 
   async function loadSession() {
     try {
       const response = await fetch('/api/auth/me');
       const user = await response.json();
-      if (user.authenticated) {
-        if (status) status.textContent = `Signed in as ${user.name}.`;
-        if (signOut) signOut.hidden = false;
-        return;
+      if (!user.authenticated) return;
+      if (loginButton) loginButton.hidden = true;
+      if (status) {
+        status.hidden = false;
+        status.textContent = `Signed in as ${user.name}.`;
       }
+      if (signOut) signOut.hidden = false;
     } catch {}
-    renderTelegramLogin();
   }
 
   signOut?.addEventListener('click', async () => {
@@ -78,22 +52,19 @@ import Layout from '../layouts/Layout.astro';
 <style>
   .auth-page { min-height: calc(100vh - var(--nav-h)); display: grid; place-items: center; padding-top: var(--space-12); padding-bottom: var(--space-12); }
   .auth-card { width: min(100%, 456px); padding: var(--space-8); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); text-align: center; }
-  .auth-heading { display: flex; flex-direction: column; align-items: center; }
-  .telegram-mark { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: var(--space-4); border-radius: 50%; background: #229ed9; color: #fff; box-shadow: 0 5px 18px rgba(34, 158, 217, 0.24); }
-  .telegram-mark svg { width: 25px; height: 25px; }
+  .github-auth-mark { width: 48px; height: 48px; display: grid; place-items: center; margin: 0 auto var(--space-4); border-radius: 50%; background: var(--text); color: var(--bg); }
+  .github-auth-mark svg { width: 26px; height: 26px; }
   .auth-card .section-label { margin-bottom: var(--space-2); }
   .auth-card .section-title { margin-bottom: var(--space-3); }
   .auth-card .section-description { margin: 0 auto var(--space-6); font-size: 0.9375rem; }
-  .telegram-login { min-height: 58px; display: grid; place-items: center; margin: 0 auto var(--space-4); padding: var(--space-3); background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); }
-  .telegram-login-inner { display: grid; place-items: center; min-height: 40px; }
-  .auth-status { color: var(--text-muted); font-size: 0.8125rem; }
-  .auth-note { display: flex; align-items: center; justify-content: center; gap: var(--space-2); color: var(--text-muted); font-size: 0.75rem; }
+  .github-login-button { width: 100%; justify-content: center; }
+  .github-login-button svg { width: 17px; height: 17px; }
+  .auth-status { margin-top: var(--space-4); color: var(--text-secondary); font-size: 0.875rem; }
+  .auth-sign-out { margin: var(--space-4) auto 0; }
+  .auth-note { display: flex; align-items: center; justify-content: center; gap: var(--space-2); margin-top: var(--space-4); color: var(--text-muted); font-size: 0.75rem; }
   .auth-note-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
-  .auth-sign-out { margin-top: var(--space-2); }
   @media (max-width: 640px) {
     .auth-page { min-height: calc(100vh - var(--nav-h) - 68px); padding-top: var(--space-6); padding-bottom: var(--space-6); }
     .auth-card { padding: var(--space-6) var(--space-4); }
-    .telegram-mark { width: 42px; height: 42px; margin-bottom: var(--space-3); }
-    .telegram-mark svg { width: 22px; height: 22px; }
   }
 </style>

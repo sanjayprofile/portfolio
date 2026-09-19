@@ -1,17 +1,24 @@
 # Portfolio
 
-## Telegram authentication
+# Astro Starter Kit: Minimal
 
-Create a Telegram bot with [@BotFather](https://t.me/BotFather), then set its domain with `/setdomain` to the production site domain. Copy the bot username and token into the deployment environment:
+## GitHub authentication
+
+Create an OAuth App in GitHub under **Settings -> Developer settings -> OAuth Apps**. Set the callback URL to:
+
+```text
+https://your-domain.com/api/auth/github/callback
+```
+
+Add these Vercel environment variables:
 
 ```env
-PUBLIC_TELEGRAM_BOT_USERNAME=sanjayclubbot
-TELEGRAM_BOT_TOKEN=your_bot_token
+GITHUB_CLIENT_ID=your_github_oauth_client_id
+GITHUB_CLIENT_SECRET=your_github_oauth_client_secret
 AUTH_SECRET=replace_with_a_long_random_secret
 ```
 
-`TELEGRAM_BOT_TOKEN` and `AUTH_SECRET` must remain server-only environment variables. The `/auth` page uses Telegram's official login widget; a first successful Telegram login creates the account and later logins sign the user in.
-# Astro Starter Kit: Minimal
+Keep `GITHUB_CLIENT_SECRET` and `AUTH_SECRET` private.
 
 ```sh
 npm create astro@latest -- --template minimal
