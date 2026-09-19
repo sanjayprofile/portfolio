@@ -3,21 +3,34 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Sign in" description="Sign in to Ratna Sanjay's portfolio with Telegram.">
-  <main class="auth-page container-prose">
+  <div class="auth-page container-prose">
     <section class="auth-card">
-      <p class="section-label">Account</p>
-      <h1 class="section-title">Sign in with Telegram</h1>
-      <p class="section-description">
-        Use your Telegram account to sign in or create an account. No password is required.
-      </p>
-
-      <div class="telegram-login" id="telegram-login">
-        <p class="auth-status" id="auth-status">Loading Telegram sign in...</p>
+      <div class="auth-heading">
+        <div class="telegram-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21.5 3.5 18.2 20c-.25 1.2-.9 1.5-1.8.95l-5-3.7-2.4 2.3c-.27.27-.5.5-1.03.5l.36-5.1 9.3-8.4c.4-.36-.08-.56-.62-.2L5.5 13.55.6 12.02c-1.07-.34-1.09-1.08.22-1.6L20 3.05c.9-.33 1.68.2 1.5.45Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <p class="section-label">Account access</p>
+        <h1 class="section-title">Continue with Telegram</h1>
+        <p class="section-description">
+          Sign in or create your account using Telegram. No password required.
+        </p>
       </div>
 
-      <button class="btn btn-secondary" id="sign-out" type="button" hidden>Sign out</button>
+      <div class="telegram-login" id="telegram-login">
+        <div class="telegram-login-inner">
+          <span class="auth-status" id="auth-status">Loading Telegram sign in...</span>
+        </div>
+      </div>
+
+      <div class="auth-note">
+        <span class="auth-note-dot"></span>
+        <span>Secure authentication through Telegram</span>
+      </div>
+      <button class="btn btn-secondary auth-sign-out" id="sign-out" type="button" hidden>Sign out</button>
     </section>
-  </main>
+  </div>
 </Layout>
 
 <script>
@@ -65,12 +78,23 @@ import Layout from '../layouts/Layout.astro';
 
 <style>
   .auth-page { min-height: calc(100vh - var(--nav-h)); display: grid; place-items: center; padding-top: var(--space-12); padding-bottom: var(--space-12); }
-  .auth-card { width: min(100%, 440px); padding: var(--space-8); border: 1px solid var(--border); border-radius: var(--radius-lg); text-align: center; }
-  .auth-card .section-description { margin: 0 auto var(--space-6); }
-  .telegram-login { min-height: 48px; display: grid; place-items: center; margin-bottom: var(--space-4); }
-  .auth-status { color: var(--text-muted); font-size: 0.875rem; }
+  .auth-card { width: min(100%, 456px); padding: var(--space-8); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); text-align: center; }
+  .auth-heading { display: flex; flex-direction: column; align-items: center; }
+  .telegram-mark { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: var(--space-4); border-radius: 50%; background: #229ed9; color: #fff; box-shadow: 0 5px 18px rgba(34, 158, 217, 0.24); }
+  .telegram-mark svg { width: 25px; height: 25px; }
+  .auth-card .section-label { margin-bottom: var(--space-2); }
+  .auth-card .section-title { margin-bottom: var(--space-3); }
+  .auth-card .section-description { margin: 0 auto var(--space-6); font-size: 0.9375rem; }
+  .telegram-login { min-height: 58px; display: grid; place-items: center; margin: 0 auto var(--space-4); padding: var(--space-3); background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); }
+  .telegram-login-inner { display: grid; place-items: center; min-height: 40px; }
+  .auth-status { color: var(--text-muted); font-size: 0.8125rem; }
+  .auth-note { display: flex; align-items: center; justify-content: center; gap: var(--space-2); color: var(--text-muted); font-size: 0.75rem; }
+  .auth-note-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+  .auth-sign-out { margin-top: var(--space-2); }
   @media (max-width: 640px) {
     .auth-page { min-height: calc(100vh - var(--nav-h) - 68px); padding-top: var(--space-6); padding-bottom: var(--space-6); }
     .auth-card { padding: var(--space-6) var(--space-4); }
+    .telegram-mark { width: 42px; height: 42px; margin-bottom: var(--space-3); }
+    .telegram-mark svg { width: 22px; height: 22px; }
   }
 </style>
