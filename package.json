@@ -17,5 +17,8 @@
   },
   "allowScripts": {
     "esbuild": true
+  },
+  "devDependencies": {
+    "@vercel/node": "^13.0.1"
   }
 }

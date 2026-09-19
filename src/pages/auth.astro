@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Sign in" description="Sign in to Ratna Sanjay's portfolio with Telegram.">
+  <main class="auth-page container-prose">
+    <section class="auth-card">
+      <p class="section-label">Account</p>
+      <h1 class="section-title">Sign in with Telegram</h1>
+      <p class="section-description">
+        Use your Telegram account to sign in or create an account. No password is required.
+      </p>
+
+      <div class="telegram-login" id="telegram-login">
+        <p class="auth-status" id="auth-status">Loading Telegram sign in...</p>
+      </div>
+
+      <button class="btn btn-secondary" id="sign-out" type="button" hidden>Sign out</button>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  const loginContainer = document.getElementById('telegram-login');
+  const status = document.getElementById('auth-status');
+  const signOut = document.getElementById('sign-out');
+
+  function renderTelegramLogin() {
+    const botUsername = import.meta.env.PUBLIC_TELEGRAM_BOT_USERNAME ?? 'sanjayclubbot';
+    if (!botUsername || !loginContainer) {
+      if (status) status.textContent = 'Telegram sign in is not configured yet.';
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+    script.async = true;
+    script.dataset.telegramLogin = botUsername;
+    script.dataset.size = 'large';
+    script.dataset.authUrl = `${window.location.origin}/api/auth/telegram`;
+    script.dataset.requestAccess = 'write';
+    loginContainer.appendChild(script);
+  }
+
+  async function loadSession() {
+    try {
+      const response = await fetch('/api/auth/me');
+      const user = await response.json();
+      if (user.authenticated) {
+        if (status) status.textContent = `Signed in as ${user.name}.`;
+        if (signOut) signOut.hidden = false;
+        return;
+      }
+    } catch {}
+    renderTelegramLogin();
+  }
+
+  signOut?.addEventListener('click', async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.reload();
+  });
+
+  loadSession();
+</script>
+
+<style>
+  .auth-page { min-height: calc(100vh - var(--nav-h)); display: grid; place-items: center; padding-top: var(--space-12); padding-bottom: var(--space-12); }
+  .auth-card { width: min(100%, 440px); padding: var(--space-8); border: 1px solid var(--border); border-radius: var(--radius-lg); text-align: center; }
+  .auth-card .section-description { margin: 0 auto var(--space-6); }
+  .telegram-login { min-height: 48px; display: grid; place-items: center; margin-bottom: var(--space-4); }
+  .auth-status { color: var(--text-muted); font-size: 0.875rem; }
+  @media (max-width: 640px) {
+    .auth-page { min-height: calc(100vh - var(--nav-h) - 68px); padding-top: var(--space-6); padding-bottom: var(--space-6); }
+    .auth-card { padding: var(--space-6) var(--space-4); }
+  }
+</style>
