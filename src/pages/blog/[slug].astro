@@ -1,0 +1,340 @@
+---
+// Dynamic blog post page — [slug].astro
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+function readingTime(body: string) {
+  return Math.max(1, Math.round(body.split(/\s+/).length / 200));
+}
+
+const rt = readingTime(post.body ?? '');
+const postId = post.id;
+---
+
+<Layout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  publishedAt={post.data.publishedAt.toISOString()}
+>
+  <!-- Reading progress bar -->
+  <div class="post-progress" id="post-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={0}></div>
+
+  <!-- Read mode overlay (exit button) -->
+  <div class="read-mode-overlay" id="read-mode-overlay">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    Read Mode
+    <button id="exit-read-mode" style="margin-left: 8px; font-weight: 600; color: var(--accent); background: none; border: none; cursor: pointer; font-family: var(--font-sans); font-size: 0.875rem;">Exit ×</button>
+  </div>
+
+  <!-- Post header -->
+  <article itemscope itemtype="https://schema.org/BlogPosting">
+    <header class="post-hero container-prose">
+      <div class="post-meta">
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <time itemprop="datePublished" datetime={post.data.publishedAt.toISOString()}>
+            {post.data.publishedAt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+          </time>
+        </span>
+        <span>·</span>
+        <span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {rt} min read
+        </span>
+        <span>·</span>
+        <span itemprop="author" itemscope itemtype="https://schema.org/Person">
+          <meta itemprop="name" content="Ratna Sanjay" />
+          By <strong>Ratna Sanjay</strong>
+        </span>
+      </div>
+
+      <h1 class="post-title" itemprop="headline">{post.data.title}</h1>
+      <p class="post-description" itemprop="description">{post.data.description}</p>
+
+      <!-- Post tags -->
+      <div class="post-tags" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+        {post.data.tags.map((tag: string) => (
+          <a href={`/blog?tag=${tag}`} class="tag tag-accent">{tag}</a>
+        ))}
+      </div>
+
+      <!-- Action bar -->
+      <div class="post-actions" id="post-actions">
+        <!-- Listen -->
+        <button class="action-btn" id={`listen-btn-${postId}`} aria-label="Listen to this article">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <span class="listen-label">Listen</span>
+        </button>
+
+        <!-- Love / React -->
+        <button class="action-btn" id={`love-btn-${postId}`} aria-label="Love this post">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span class="love-count">0</span>
+        </button>
+
+        <!-- Share -->
+        <button class="action-btn" id={`share-btn-${postId}`} aria-label="Share this article">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Share
+        </button>
+
+        <!-- Read Mode -->
+        <button class="action-btn" id={`readmode-btn-${postId}`} aria-label="Toggle read mode">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          Read mode
+        </button>
+
+        <!-- Copy link -->
+        <button class="action-btn" id={`copy-btn-${postId}`} aria-label="Copy link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Copy link
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="container-prose" style="padding-bottom: var(--space-16);" id="post-content">
+      <div class="prose" itemprop="articleBody">
+        <Content />
+      </div>
+
+      <!-- Comments — powered by Giscus (GitHub Discussions) -->
+      <div class="comments-section" id="comments-section">
+        <h2 class="comments-header">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline; vertical-align: middle; margin-right: 8px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Comments
+        </h2>
+
+        <!--
+          SETUP REQUIRED — Giscus (GitHub Discussions)
+          1. Enable Discussions on your GitHub repo (Settings → Features → Discussions)
+          2. Install Giscus app: https://github.com/apps/giscus
+          3. Go to https://giscus.app, enter your repo, get the IDs below
+          4. Replace YOUR_GITHUB_USERNAME/YOUR_REPO, data-repo-id, and data-category-id
+        -->
+        <div id="giscus-container">
+          <script src="https://giscus.app/client.js"
+            data-repo="YOUR_GITHUB_USERNAME/YOUR_REPO"
+            data-repo-id="YOUR_REPO_ID"
+            data-category="Blog Comments"
+            data-category-id="YOUR_CATEGORY_ID"
+            data-mapping="pathname"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="preferred_color_scheme"
+            data-lang="en"
+            data-loading="lazy"
+            crossorigin="anonymous"
+            async
+          ></script>
+        </div>
+
+        <noscript>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            JavaScript is required to load comments.
+            <a href="https://giscus.app" target="_blank" rel="noopener">Powered by Giscus</a>.
+          </p>
+        </noscript>
+      </div>
+
+
+      <!-- Next / Prev navigation -->
+      <nav style="margin-top: var(--space-12); padding-top: var(--space-8); border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 1rem;">
+        <a href="/blog" class="btn btn-secondary btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          All posts
+        </a>
+        <a href="/contact" class="btn btn-ghost btn-sm">
+          Have thoughts? Reach out →
+        </a>
+      </nav>
+    </div>
+  </article>
+</Layout>
+
+<script define:vars={{ postId }}>
+  // ── Reading Progress Bar ──────────────────────────
+  const progressBar = document.getElementById('post-progress');
+  const content = document.getElementById('post-content');
+
+  function updateProgress() {
+    if (!progressBar || !content) return;
+    const rect = content.getBoundingClientRect();
+    const total = content.offsetHeight - window.innerHeight;
+    const scrolled = Math.max(0, -rect.top);
+    const pct = Math.min(100, Math.round((scrolled / total) * 100));
+    progressBar.style.width = pct + '%';
+    progressBar.setAttribute('aria-valuenow', String(pct));
+  }
+
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  // ── Listen to Article (Web Speech API) ───────────
+  const listenBtn = document.getElementById(`listen-btn-${postId}`);
+  const listenLabel = listenBtn?.querySelector('.listen-label');
+  let utterance = null;
+  let isSpeaking = false;
+
+  listenBtn?.addEventListener('click', () => {
+    if (!('speechSynthesis' in window)) {
+      alert('Text-to-speech is not supported in your browser.');
+      return;
+    }
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      isSpeaking = false;
+      listenBtn.classList.remove('listening');
+      if (listenLabel) listenLabel.textContent = 'Listen';
+      return;
+    }
+
+    const prose = document.querySelector('.prose');
+    const text = prose?.textContent ?? '';
+    utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.95;
+    utterance.pitch = 1;
+
+    utterance.onend = () => {
+      isSpeaking = false;
+      listenBtn.classList.remove('listening');
+      if (listenLabel) listenLabel.textContent = 'Listen';
+    };
+
+    utterance.onerror = () => {
+      isSpeaking = false;
+      listenBtn.classList.remove('listening');
+      if (listenLabel) listenLabel.textContent = 'Listen';
+    };
+
+    window.speechSynthesis.speak(utterance);
+    isSpeaking = true;
+    listenBtn.classList.add('listening');
+    if (listenLabel) listenLabel.textContent = 'Stop';
+  });
+
+  // ── Love / React ──────────────────────────────────
+  const loveBtn = document.getElementById(`love-btn-${postId}`);
+  const loveCount = loveBtn?.querySelector('.love-count');
+  const storageKey = `love-${postId}`;
+
+  let loves = parseInt(localStorage.getItem(storageKey) ?? '0', 10);
+  let loved = localStorage.getItem(`loved-${postId}`) === 'true';
+
+  if (loveCount) loveCount.textContent = String(loves);
+  if (loved) loveBtn?.classList.add('loved');
+
+  loveBtn?.addEventListener('click', () => {
+    if (loved) {
+      loves = Math.max(0, loves - 1);
+      loved = false;
+      loveBtn.classList.remove('loved');
+    } else {
+      loves++;
+      loved = true;
+      loveBtn.classList.add('loved');
+      // Heart animation
+      const heart = document.createElement('span');
+      heart.textContent = '❤️';
+      heart.style.cssText = 'position:fixed;font-size:2rem;pointer-events:none;z-index:9999;transition:all 0.8s ease;';
+      const rect = loveBtn.getBoundingClientRect();
+      heart.style.left = rect.left + rect.width / 2 + 'px';
+      heart.style.top = rect.top + 'px';
+      document.body.appendChild(heart);
+      requestAnimationFrame(() => {
+        heart.style.transform = 'translateY(-80px) scale(1.5)';
+        heart.style.opacity = '0';
+      });
+      setTimeout(() => heart.remove(), 900);
+    }
+    if (loveCount) loveCount.textContent = String(loves);
+    localStorage.setItem(storageKey, String(loves));
+    localStorage.setItem(`loved-${postId}`, String(loved));
+  });
+
+  // ── Share ─────────────────────────────────────────
+  const shareBtn = document.getElementById(`share-btn-${postId}`);
+  shareBtn?.addEventListener('click', async () => {
+    const shareData = {
+      title: document.title,
+      text: document.querySelector('meta[name="description"]')?.getAttribute('content') ?? '',
+      url: window.location.href,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        shareBtn.classList.add('active');
+        const orig = shareBtn.innerHTML;
+        shareBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+        setTimeout(() => { shareBtn.innerHTML = orig; shareBtn.classList.remove('active'); }, 2000);
+      }
+    } catch {}
+  });
+
+  // ── Copy link ─────────────────────────────────────
+  const copyBtn = document.getElementById(`copy-btn-${postId}`);
+  copyBtn?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      copyBtn.classList.add('active');
+      const origContent = copyBtn.innerHTML;
+      copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+      setTimeout(() => { copyBtn.innerHTML = origContent; copyBtn.classList.remove('active'); }, 2000);
+    } catch {}
+  });
+
+  // ── Read Mode ─────────────────────────────────────
+  const readModeBtn = document.getElementById(`readmode-btn-${postId}`);
+  const exitReadModeBtn = document.getElementById('exit-read-mode');
+
+  function enterReadMode() {
+    document.body.classList.add('read-mode');
+    readModeBtn?.classList.add('active');
+    localStorage.setItem('read-mode', 'true');
+  }
+
+  function exitReadMode() {
+    document.body.classList.remove('read-mode');
+    readModeBtn?.classList.remove('active');
+    localStorage.setItem('read-mode', 'false');
+  }
+
+  readModeBtn?.addEventListener('click', () => {
+    if (document.body.classList.contains('read-mode')) {
+      exitReadMode();
+    } else {
+      enterReadMode();
+    }
+  });
+
+  exitReadModeBtn?.addEventListener('click', exitReadMode);
+
+  // ── Sync Giscus theme with site theme ────────────
+  function syncGiscusTheme() {
+    const theme = document.documentElement.getAttribute('data-theme') ?? 'light';
+    const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    if (!iframe?.contentWindow) return;
+    iframe.contentWindow.postMessage({ giscus: { setConfig: { theme: theme === 'dark' ? 'dark' : 'light' } } }, 'https://giscus.app');
+  }
+
+  // Observe theme changes
+  const observer = new MutationObserver(() => syncGiscusTheme());
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+</script>

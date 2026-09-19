@@ -1,0 +1,161 @@
+---
+// Projects Page
+import Layout from '../layouts/Layout.astro';
+
+const liveProjects = [
+  {
+    name: 'OpenNote',
+    desc: 'A collaborative markdown editor with real-time sync, offline support, and beautiful typography. Built for writers who care about their tools.',
+    tags: ['Astro', 'Cloudflare Workers', 'SQLite', 'TypeScript'],
+    status: 'live',
+    icon: '📝',
+    url: 'https://opennote.app',
+    github: 'https://github.com/ratnasanjay/opennote',
+    year: '2026',
+  },
+  {
+    name: 'Seedling',
+    desc: 'A habit tracker that grows a virtual plant as you build better daily routines. Because gamification actually works.',
+    tags: ['SvelteKit', 'Deno', 'Postgres', 'Drizzle'],
+    status: 'live',
+    icon: '🌱',
+    url: 'https://seedling.so',
+    github: 'https://github.com/ratnasanjay/seedling',
+    year: '2025',
+  },
+  {
+    name: 'DevPalette',
+    desc: 'A VS Code extension that generates accessible, harmonious colour palettes from any image using colour theory algorithms.',
+    tags: ['VS Code API', 'TypeScript', 'Canvas API'],
+    status: 'live',
+    icon: '🎨',
+    url: 'https://marketplace.visualstudio.com',
+    github: 'https://github.com/ratnasanjay/devpalette',
+    year: '2025',
+  },
+];
+
+const upcomingProjects = [
+  {
+    name: 'Prism CLI',
+    desc: 'Terminal colour-palette generator powered by AI image analysis. Extracts palettes from images and exports to CSS, Tailwind, or JSON.',
+    tags: ['Go', 'OpenAI', 'Bash'],
+    status: 'upcoming',
+    icon: '✨',
+    eta: 'Q4 2026',
+    github: 'https://github.com/ratnasanjay/prism-cli',
+  },
+  {
+    name: 'Logbook',
+    desc: 'A developer-first daily standup tool. Keep your team in sync with async updates, integrated with GitHub, Linear, and Slack.',
+    tags: ['Next.js', 'tRPC', 'Supabase', 'Resend'],
+    status: 'upcoming',
+    icon: '📋',
+    eta: 'Q1 2027',
+    github: null,
+  },
+];
+---
+
+<Layout
+  title="Projects"
+  description="Software projects by Ratna Sanjay — live products, open source tools, and experiments in code."
+>
+  <!-- Hero -->
+  <section class="container" style="padding: var(--space-16) 0 var(--space-10);">
+    <p class="section-label animate-fade-in-up">What I build</p>
+    <h1 class="section-title animate-fade-in-up animate-delay-1" style="font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.04em;">
+      Projects
+    </h1>
+    <p class="section-description animate-fade-in-up animate-delay-2" style="font-size: 1.0625rem;">
+      Things I've shipped, things I'm building, and experiments along the way.
+    </p>
+  </section>
+
+  <!-- Live Projects -->
+  <section class="container section" style="padding-top: 0;">
+    <div class="section-header">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-6);">
+        <span class="tag tag-success" style="font-size: 0.8125rem;">● Live</span>
+        <h2 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text);">Live Projects</h2>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      {liveProjects.map((project, i) => (
+        <div class={`project-card animate-fade-in-up animate-delay-${i + 1}`} id={`project-${project.name.toLowerCase().replace(/\s+/g, '-')}`}>
+          <div class="project-card-header">
+            <div class="project-icon">{project.icon}</div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span class="tag tag-success">● Live</span>
+              <span class="tag" style="color: var(--text-muted);">{project.year}</span>
+            </div>
+          </div>
+          <h3 style="font-size: 1.125rem;">{project.name}</h3>
+          <p>{project.desc}</p>
+          <div class="project-tech">
+            {project.tags.map(t => <span class="tag">{t}</span>)}
+          </div>
+          <div class="project-links">
+            <a href={project.github} class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer" aria-label={`View ${project.name} on GitHub`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              GitHub
+            </a>
+            <a href={project.url} class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer" aria-label={`Open ${project.name} live`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              Live
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <hr class="divider container" />
+
+  <!-- Upcoming Projects -->
+  <section class="container section" style="padding-bottom: var(--space-24);">
+    <div class="section-header">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-6);">
+        <span class="tag tag-warning" style="font-size: 0.8125rem;">◌ Upcoming</span>
+        <h2 style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.03em; color: var(--text);">In Progress</h2>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      {upcomingProjects.map((project, i) => (
+        <div
+          class={`project-card animate-fade-in-up animate-delay-${i + 1}`}
+          id={`upcoming-${project.name.toLowerCase().replace(/\s+/g, '-')}`}
+          style="opacity: 0.85; border-style: dashed;"
+        >
+          <div class="project-card-header">
+            <div class="project-icon">{project.icon}</div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span class="tag tag-warning">◌ Upcoming</span>
+              <span class="tag" style="color: var(--text-muted);">ETA {project.eta}</span>
+            </div>
+          </div>
+          <h3 style="font-size: 1.125rem;">{project.name}</h3>
+          <p>{project.desc}</p>
+          <div class="project-tech">
+            {project.tags.map(t => <span class="tag">{t}</span>)}
+          </div>
+          <div class="project-links">
+            {project.github ? (
+              <a href={project.github} class="btn btn-secondary btn-sm" target="_blank" rel="noopener noreferrer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                Watch on GitHub
+              </a>
+            ) : (
+              <span class="btn btn-ghost btn-sm" style="cursor: default; color: var(--text-muted);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Coming soon
+              </span>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>

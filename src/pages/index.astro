@@ -1,0 +1,155 @@
+---
+// Home Page — Ratna Sanjay Portfolio
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 3);
+
+function readingTime(body: string) {
+  const words = body.split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+const projects = [
+  { name: 'OpenNote', desc: 'A collaborative markdown editor with real-time sync and offline support.', tags: ['Astro', 'Cloudflare', 'SQLite'], status: 'live', icon: '📝', url: '#', github: '#' },
+  { name: 'Seedling', desc: 'Habit tracker that grows a virtual plant as you build better routines.', tags: ['SvelteKit', 'Deno', 'Postgres'], status: 'live', icon: '🌱', url: '#', github: '#' },
+  { name: 'Prism CLI', desc: 'Terminal colour-palette generator powered by AI image analysis.', tags: ['Go', 'OpenAI', 'Bash'], status: 'upcoming', icon: '🎨', url: null, github: '#' },
+];
+---
+
+<Layout title="Ratna Sanjay" description="Ratna Sanjay — developer, writer, and builder. Sharing thoughts on software, design, and building for the web.">
+
+  <!-- Hero -->
+  <section class="hero container">
+    <div class="hero-badge animate-fade-in-up">
+      <span class="hero-badge-dot"></span>
+      Available for freelance &amp; collaboration
+    </div>
+    <h1 class="animate-fade-in-up animate-delay-1">
+      Hey, I'm <span>Ratna Sanjay</span> 👋
+    </h1>
+    <p class="hero-description animate-fade-in-up animate-delay-2">
+      I build elegant software, write about what I learn, and care deeply about developer experience. Currently exploring the intersection of performance and simplicity.
+    </p>
+    <div class="hero-actions animate-fade-in-up animate-delay-3">
+      <a href="/projects" class="btn btn-primary" id="hero-projects-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        View Projects
+      </a>
+      <a href="/blog" class="btn btn-secondary" id="hero-blog-btn">
+        Read Blog
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="/contact" class="btn btn-ghost" id="hero-contact-btn">Contact me</a>
+    </div>
+  </section>
+
+  <hr class="divider container" />
+
+  <!-- Latest Blog Posts -->
+  <section class="section container">
+    <div class="section-header">
+      <p class="section-label">From the blog</p>
+      <h2 class="section-title">Recent Writings</h2>
+      <p class="section-description">Thoughts on code, design, and building things that matter.</p>
+    </div>
+
+    <div class="grid-2">
+      {posts.map((post, i) => (
+        <a
+          href={`/blog/${post.id}`}
+          class={`blog-card animate-fade-in-up animate-delay-${i + 1}`}
+          id={`blog-card-${post.id}`}
+        >
+          <div class="blog-card-meta">
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              {post.data.publishedAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            </span>
+            <span>·</span>
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              {readingTime(post.body ?? '')} min read
+            </span>
+          </div>
+          <h2>{post.data.title}</h2>
+          <p>{post.data.description}</p>
+          <div class="blog-card-footer">
+            <div class="blog-card-tags">
+              {post.data.tags?.slice(0, 2).map((tag: string) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+            <span class="read-more">
+              Read
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div style="margin-top: 2rem; text-align: center;">
+      <a href="/blog" class="btn btn-secondary" id="view-all-posts-btn">View all posts</a>
+    </div>
+  </section>
+
+  <hr class="divider container" />
+
+  <!-- Featured Projects -->
+  <section class="section container">
+    <div class="section-header">
+      <p class="section-label">What I've built</p>
+      <h2 class="section-title">Featured Projects</h2>
+      <p class="section-description">A handful of things I've shipped or am shipping.</p>
+    </div>
+
+    <div class="grid-3">
+      {projects.map((project, i) => (
+        <div class={`project-card animate-fade-in-up animate-delay-${i + 1}`}>
+          <div class="project-card-header">
+            <div class="project-icon">{project.icon}</div>
+            <span class={`tag tag-${project.status === 'live' ? 'success' : 'warning'}`}>
+              {project.status === 'live' ? '● Live' : '◌ Upcoming'}
+            </span>
+          </div>
+          <h3>{project.name}</h3>
+          <p>{project.desc}</p>
+          <div class="project-tech">
+            {project.tags.map((t) => <span class="tag">{t}</span>)}
+          </div>
+          <div class="project-links">
+            <a href={project.github} class="btn btn-secondary btn-sm" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+              GitHub
+            </a>
+            {project.url && (
+              <a href={project.url} class="btn btn-primary btn-sm" target="_blank" rel="noopener">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                Live
+              </a>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <div style="margin-top: 2rem; text-align: center;">
+      <a href="/projects" class="btn btn-secondary" id="view-all-projects-btn">View all projects</a>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section container text-center" style="padding-bottom: var(--space-24);">
+    <div style="max-width: 480px; margin: 0 auto;">
+      <h2 class="section-title">Let's work together</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--space-6);">
+        Have a project in mind or just want to chat? I'm always happy to connect.
+      </p>
+      <a href="/contact" class="btn btn-primary" id="cta-contact-btn">Get in touch →</a>
+    </div>
+  </section>
+
+</Layout>

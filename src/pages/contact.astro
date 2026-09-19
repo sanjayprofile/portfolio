@@ -1,0 +1,137 @@
+---
+// Contact Page
+import Layout from '../layouts/Layout.astro';
+
+const contacts = [
+  {
+    id: 'telegram',
+    icon: '✈️',
+    name: 'Telegram',
+    handle: '@ratnasanjay',
+    description: 'Best way to reach me quickly',
+    url: 'https://t.me/ratnasanjay',
+    color: '#229ED9',
+    primary: true,
+  },
+  {
+    id: 'email',
+    icon: '✉️',
+    name: 'Email',
+    handle: 'hello@ratnasanjay.dev',
+    description: 'For longer conversations',
+    url: 'mailto:hello@ratnasanjay.dev',
+    color: '#0070f3',
+    primary: false,
+  },
+  {
+    id: 'github',
+    icon: '🐙',
+    name: 'GitHub',
+    handle: '@ratnasanjay',
+    description: 'See what I\'m building',
+    url: 'https://github.com/ratnasanjay',
+    color: '#333',
+    primary: false,
+  },
+  {
+    id: 'twitter',
+    icon: '🐦',
+    name: 'X / Twitter',
+    handle: '@ratnasanjay',
+    description: 'Thoughts in under 280 chars',
+    url: 'https://x.com/ratnasanjay',
+    color: '#000',
+    primary: false,
+  },
+];
+---
+
+<Layout
+  title="Contact"
+  description="Get in touch with Ratna Sanjay — available on Telegram, email, GitHub, and more."
+>
+  <!-- Hero -->
+  <section class="contact-hero container-prose">
+    <p class="section-label animate-fade-in-up">Get in touch</p>
+    <h1 class="section-title animate-fade-in-up animate-delay-1" style="font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -0.04em; margin-bottom: var(--space-4);">
+      Let's Talk
+    </h1>
+    <p class="animate-fade-in-up animate-delay-2" style="color: var(--text-secondary); font-size: 1.0625rem; line-height: 1.7; max-width: 480px; margin: 0 auto;">
+      Have a project in mind, a question about my work, or just want to say hello? I'm always happy to connect. Telegram is the fastest way to reach me.
+    </p>
+  </section>
+
+  <!-- Contact Options -->
+  <section class="container" style="padding-bottom: var(--space-24);">
+    <!-- Primary: Telegram -->
+    <div class="animate-fade-in-up animate-delay-2" style="max-width: 480px; margin: 0 auto var(--space-8);">
+      <a
+        href="https://t.me/ratnasanjay"
+        id="contact-telegram-btn"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="
+          display: flex;
+          align-items: center;
+          gap: var(--space-4);
+          padding: var(--space-5) var(--space-6);
+          background: linear-gradient(135deg, #229ED9, #1a7db5);
+          color: white;
+          border-radius: var(--radius-lg);
+          text-decoration: none;
+          transition: all var(--transition);
+          box-shadow: 0 4px 24px rgba(34, 158, 217, 0.3);
+        "
+        class="telegram-cta"
+      >
+        <div style="width: 48px; height: 48px; background: rgba(255,255,255,0.2); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0;">
+          ✈️
+        </div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 1.0625rem; margin-bottom: 2px;">Message me on Telegram</div>
+          <div style="opacity: 0.85; font-size: 0.875rem;">@ratnasanjay · Usually responds within a few hours</div>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+
+    <!-- Other contacts -->
+    <div class="contact-grid animate-fade-in-up animate-delay-3" style="max-width: 640px; margin: 0 auto;">
+      {contacts.filter(c => !c.primary).map((contact) => (
+        <a
+          href={contact.url}
+          id={`contact-${contact.id}-btn`}
+          target={contact.id !== 'email' ? '_blank' : undefined}
+          rel="noopener noreferrer"
+          class="contact-card"
+        >
+          <div class="contact-card-icon" style={`background: color-mix(in srgb, ${contact.color} 12%, transparent); color: ${contact.color};`}>
+            {contact.icon}
+          </div>
+          <h3>{contact.name}</h3>
+          <p style="font-family: var(--font-mono); font-size: 0.8125rem;">{contact.handle}</p>
+          <p>{contact.description}</p>
+        </a>
+      ))}
+    </div>
+
+    <!-- Availability note -->
+    <div class="animate-fade-in-up animate-delay-4" style="max-width: 480px; margin: var(--space-12) auto 0; padding: var(--space-5) var(--space-6); background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); text-align: center;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-2); margin-bottom: var(--space-2);">
+        <span style="width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; animation: pulse 2s infinite;"></span>
+        <strong style="font-size: 0.9375rem; color: var(--text);">Available for freelance work</strong>
+      </div>
+      <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0;">
+        Open to interesting projects, consulting, and collaborations. Response time: usually &lt; 24h.
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .telegram-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(34, 158, 217, 0.4) !important;
+    text-decoration: none;
+  }
+</style>

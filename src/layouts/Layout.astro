@@ -1,0 +1,109 @@
+---
+// Layout — Base HTML shell
+import '../styles/global.css';
+import Nav from './Nav.astro';
+import Footer from './Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: string;
+  publishedAt?: string;
+  author?: string;
+}
+
+const {
+  title,
+  description = 'Ratna Sanjay — developer, writer, and builder. Sharing thoughts on software, design, and building for the web.',
+  image = '/og-default.png',
+  type = 'website',
+  publishedAt,
+  author = 'Ratna Sanjay',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://ratnasanjay.dev');
+const fullTitle = title === 'Ratna Sanjay' ? title : `${title} — Ratna Sanjay`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta -->
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={author} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site ?? 'https://ratnasanjay.dev')} />
+    <meta property="og:site_name" content="Ratna Sanjay" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site ?? 'https://ratnasanjay.dev')} />
+
+    {publishedAt && <meta property="article:published_time" content={publishedAt} />}
+
+    <!-- JSON-LD -->
+    {type === 'article' && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: title,
+        description,
+        author: { '@type': 'Person', name: author, url: 'https://ratnasanjay.dev' },
+        datePublished: publishedAt,
+        url: canonicalURL,
+        image: new URL(image, 'https://ratnasanjay.dev'),
+        publisher: { '@type': 'Person', name: 'Ratna Sanjay' },
+      })} />
+    )}
+
+    {type === 'website' && (
+      <script type="application/ld+json" set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: 'Ratna Sanjay',
+        url: 'https://ratnasanjay.dev',
+        sameAs: ['https://t.me/ratnasanjay'],
+        jobTitle: 'Developer & Writer',
+      })} />
+    )}
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon copy.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0070f3" />
+
+
+    <!-- Theme init — prevent FOUC -->
+    <script is:inline>
+      (function () {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = stored ?? (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+  </head>
+  <body>
+    <Nav />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
