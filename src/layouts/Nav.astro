@@ -12,7 +12,9 @@ const currentPath = Astro.url.pathname;
 
 <nav class="nav" role="navigation" aria-label="Main navigation">
   <div class="nav-inner">
-    <a href="/" class="nav-logo" aria-label="Ratna Sanjay — home">RS.</a>
+    <a href="/" class="nav-logo" aria-label="Ratna Sanjay — home">
+      <img src="/web-app-manifest-192x192.png" alt="Ratna Sanjay" />
+    </a>
 
     <ul class="nav-links" id="nav-links" role="list">
       {navLinks.map(({ href, label }) => (
